@@ -2,45 +2,47 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetFrameRate(3);
+
+    video.loadMovie("fingers.mov");
+    video.setLoopState(OF_LOOP_NORMAL);
+    video.play();
     
-    boombox.loadSound("beat.wav");
-    boombox.setMultiPlay(true);
-   // boombox.setLoop(true);
+    grab.setDeviceID(0);
+    grab.initGrabber(320, 240);
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::update()
-{
-    vector<Particle> hold;
+void ofApp::update(){
+    video.update();
     
-    for (int i = 0; i < emitter.size(); i++)
-    {
-        emitter[i].applyForces();
-        emitter[i].update();
+    grab.update();
     
-        if (!emitter[i].destroy)
-            hold.push_back(emitter[i]);
-    }
-    
-    emitter.clear();
-    emitter = hold;
-    hold.clear();
-    
-//    cerr << emitter.size() << endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(ofColor::sandyBrown);
-//    ofBackground(ofRandom(255), ofRandom(255), ofRandom(255));
+    video.draw(0, 0, video.getWidth(), video.getHeight());
     
-    for (int i = 0; i < emitter.size(); i++) {
-        emitter[i].draw();
+    
+    ofPixels &pixels = video.getPixelsRef();
+    
+    ofPushMatrix();
+    ofTranslate(video.getWidth()+10, 0);
+    for (int x = 0; x<video.getWidth(); x++)
+    {
+        int pixY = ofMap(mouseY, 0, ofGetHeight(), 0, video.getHeight());
+        ofColor c = pixels.getColor(x, pixY);
+        ofSetColor(c);
+        ofLine(x, 0, x, video.getHeight());
     }
+    ofPopMatrix();
     
-    ofSetColor(ofColor::seaGreen);
-    ofRect(0, ofGetHeight()-100, ofGetWidth(), ofGetHeight()-100);
+    ofSetColor(255);
+    ofPushMatrix();
+    ofTranslate(0, video.getHeight() + 10);
+    grab.draw(0, 0, grab.getWidth(), grab.getHeight());
+    ofPopMatrix();
 }
 
 //--------------------------------------------------------------
@@ -55,7 +57,8 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    mouseX = x;
+    mouseY = y;
 }
 
 //--------------------------------------------------------------
@@ -64,16 +67,8 @@ void ofApp::mouseDragged(int x, int y, int button){
 }
 
 //--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button)
-{
-    int max = ofRandom(10, 20);
-    
-    for (int i = 0; i < max; i++) {
-        emitter.push_back( Particle(ofVec2f(x, y),
-                                    ofVec2f(ofRandom(-20, 20), ofRandom(-20, 20)),
-                                    ofColor::salmon));
-    }
-    boombox.play();
+void ofApp::mousePressed(int x, int y, int button){
+
 }
 
 //--------------------------------------------------------------

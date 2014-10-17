@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "Particle.h"
 
 class ofApp : public ofBaseApp{
 
@@ -19,9 +18,42 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-    vector <Particle> emitter;
-    
-    ofSoundPlayer boombox;
 		
+    
+    ofVideoPlayer video;
+    
+    ofVideoGrabber grab;
+    
+    deque<ofPixels>frames;
+    
+    int numFrames;
+    int numSlice;
+    
+    ofPixels imagePixels, imagePixels2;
+    ofTexture image, image2;
+    
+    int mouseX, mouseY;
+    
+    ofColor getPixelColor( int x, int y);
+    
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
